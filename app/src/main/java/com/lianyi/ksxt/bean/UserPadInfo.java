@@ -15,5 +15,5 @@ public class UserPadInfo {
     public int examMinute; //考试时长 分钟
     public int confirm; // 学生信息确认状态 0未确认 1已确认,
     public int examinationStatus;// 考生考试状态 0 未开始 1进行中 2已结束,
-    public int sceneId; // 场次id
+    public String sceneId; // 场次id
 }

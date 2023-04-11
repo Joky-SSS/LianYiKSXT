@@ -2,15 +2,10 @@ package com.lianyi.ksxt
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.blankj.utilcode.util.ApiUtils.Api
 import com.lianyi.ksxt.api.ApiService
 import com.lianyi.ksxt.bean.State
 import com.lianyi.ksxt.bean.Token
@@ -28,16 +23,17 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import rxhttp.asFlow
+import rxhttp.repeat
 import rxhttp.toAwait
 import rxhttp.wrapper.param.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.time.Duration
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private var state = State.NOT_CONFIRM
+    private var state = State.NOT_START
     private var userPadInfo: UserPadInfo = UserPadInfo()
 
     @SuppressLint("CheckResult")
@@ -75,9 +71,8 @@ class MainActivity : AppCompatActivity() {
                 .toFlow<Token>()
                 .collectLatest { token ->
                     MMKV.defaultMMKV().encode(Constants.TOKEN, token)
-                    getVideoUrl()
-                    getScenesStatus()
                     startHeartBeat()
+//                    getScenesStatus()
                 }
         }
     }
@@ -85,12 +80,11 @@ class MainActivity : AppCompatActivity() {
     private fun startHeartBeat() {
         lifecycleScope.launch {
             val padCode = AppHolder.getPadCode()
-            repeat(Int.MAX_VALUE) {
-                RxHttp.postForm(ApiService.API_HEART_BEAT)
-                    .add("padId", "123456")
-                    .toFlow<Void>(false).collect()
-                delay(60 * 1000)
-            }
+            RxHttp.postForm(ApiService.API_HEART_BEAT)
+                .add("padId", "123456")
+                .toAwait<String>()
+                .repeat(Long.MAX_VALUE, 60 * 1000)
+                .asFlow().collect()
         }
     }
 
@@ -110,31 +104,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val dispatcher = Dispatchers.IO
-    private val statusFlow = channelFlow {
-        while (isActive) {
-            val padCode = AppHolder.getPadCode()
-            try {
-                val status = RxHttp.get(ApiService.API_GET_SCENES_STATUS)
-                    .add("padId", "123456")
-                    .toAwait<Int>().await()
-                send(status)
-            } catch (e: Exception) {
-            }
-            delay(5000)
-        }
-    }.flowOn(dispatcher)
-
     /**
      * 轮询考试开启状态
      */
     private fun getScenesStatus() {
         lifecycleScope.launch {
-            statusFlow.collectLatest { status ->
-                if (status == 1) {
-                    dispatcher.cancel()
-                    getUserPadInfo()
-                }
+            val padCode = AppHolder.getPadCode()
+            try {
+                val status = RxHttp.get(ApiService.API_GET_SCENES_STATUS)
+                    .add("padId", "123456")
+                    .toAwait<Int>()
+                    .asFlow().collectLatest {
+                        if (it == 1) {
+                            getUserPadInfo()
+                            getVideoUrl()
+                        } else {
+                            toast("暂无考试，请等待考场管理员开启考试")
+                        }
+                    }
+            } catch (e: Exception) {
             }
         }
     }
@@ -146,12 +134,24 @@ class MainActivity : AppCompatActivity() {
         val padCode = AppHolder.getPadCode()
         lifecycleScope.launch {
             RxHttp.get(ApiService.API_GET_USER_PAD_INFO)
-                .toFlowResponse<UserPadInfo>()
-                .onStart { showLoading() }
-                .onCompletion { hideLoading() }
-                .catch {
-                    toast(it.message)
-                }.collectLatest {
+                .add("padId", "123456")
+                .toFlow<UserPadInfo>()
+                .collectLatest {
+                    setUserInfo(it)
+                }
+        }
+    }
+
+    private fun repeatRequestUserInfo() {
+        val padCode = AppHolder.getPadCode()
+        lifecycleScope.launch {
+            RxHttp.get(ApiService.API_GET_USER_PAD_INFO)
+                .add("padId", "123456")
+                .toAwait<UserPadInfo>()
+                .repeat(Long.MAX_VALUE, 5 * 1000) { userPadInfo ->
+                    userPadInfo.realBeginTime.isNullOrBlank()
+                }.asFlow()
+                .collectLatest {
                     setUserInfo(it)
                 }
         }
@@ -226,7 +226,7 @@ class MainActivity : AppCompatActivity() {
      */
     private val countDispatcher = Dispatchers.Default
     private fun starTimeCount() {
-        val timeStr = userPadInfo!!.realBeginTime
+        val timeStr = userPadInfo.realBeginTime ?: return
         val startTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).parse(timeStr).time
         val timeEmitter = channelFlow {
             while (isActive) {
@@ -265,10 +265,10 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val padCode = AppHolder.getPadCode()
             RxHttp.postForm(ApiService.API_CONFIRM_INFO)
-                .add("padid","123456")
-                .toFlow<Void>()
+                .add("padId", "123456")
+                .toFlow<String>()
                 .collectLatest {
-                    updateButton(Constants.CONFIRMED,Constants.UNSTART)
+                    updateButton(Constants.CONFIRMED, Constants.UNSTART)
                 }
         }
 
@@ -293,7 +293,7 @@ class MainActivity : AppCompatActivity() {
             RxHttp.postForm(ApiService.API_FINISH_EXAM)
                 .add("sceneId", userPadInfo!!.sceneId)
                 .add("studentId", userPadInfo!!.studentId)
-                .toFlow<Void>()
+                .toFlow<String>()
                 .collectLatest {
                     updateButton(Constants.CONFIRMED, Constants.FINISH)
                 }
@@ -305,6 +305,9 @@ class MainActivity : AppCompatActivity() {
      */
     private fun buttonClick() {
         when (state) {
+            State.NOT_START -> {
+                getScenesStatus()
+            }
             State.NOT_CONFIRM -> {
                 showConfirmTip()
             }
@@ -360,7 +363,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private inline fun <reified T> RxHttpFormParam.toFlow(toastError: Boolean = true): Flow<T> {
-        return toFlowResponse<T>()
+        return toAwait<T>()
+            .asFlow()
             .onStart { showLoading() }
             .onCompletion { hideLoading() }
             .catch {
@@ -369,7 +373,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private inline fun <reified T> RxHttpNoBodyParam.toFlow(toastError: Boolean = true): Flow<T> {
-        return toFlowResponse<T>()
+        return toAwait<T>()
+            .asFlow()
             .onStart { showLoading() }
             .onCompletion { hideLoading() }
             .catch {

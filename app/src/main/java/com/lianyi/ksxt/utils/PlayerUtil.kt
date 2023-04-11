@@ -10,7 +10,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer
 object PlayerUtil {
     fun initPlayer(videoPlayer :StandardGSYVideoPlayer) {
         var videoOptionModel =
-            VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "udp")
+            VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp")
         val list: MutableList<VideoOptionModel> = ArrayList()
         list.add(videoOptionModel)
         videoOptionModel =
