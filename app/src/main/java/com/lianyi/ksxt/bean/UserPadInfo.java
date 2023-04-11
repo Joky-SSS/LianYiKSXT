@@ -7,7 +7,7 @@ public class UserPadInfo {
     public String studentName = ""; //"学生姓名"
     public String subjectName = ""; //考试科目,
     public String question = ""; //"考试题"
-    public String seatSeg = "";//"考桌编号"
+    public String seatSeq = "";//"考桌编号"
     public String studentId = ""; //考生id,
     public String studentCode = ""; //"准考证号"
     public String schoolName = ""; //"学校名称"

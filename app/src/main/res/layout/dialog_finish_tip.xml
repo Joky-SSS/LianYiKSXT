@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="480dp"
+    android:layout_width="420dp"
     android:layout_height="240dp"
-    android:background="@color/white"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/shape_dialog"
     android:orientation="vertical">
-<Space
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:layout_weight="1"/>
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
     <ImageView
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:src="@color/color_button_red"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="24dp"/>
+        android:layout_marginBottom="24dp"
+        android:visibility="gone" />
+
     <TextView
+        android:id="@+id/tvContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="确定结束考试？"
+        tools:text="确定结束考试？"
+        android:textSize="24sp"
         android:layout_gravity="center_horizontal"
-        android:textColor="@color/text_color_01"/>
+        android:textColor="@color/text_color_01" />
 <Space
     android:layout_width="0dp"
     android:layout_height="0dp"
@@ -34,7 +41,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/color_button_submit"
+            android:background="@drawable/shape_dialog_confirm"
             android:gravity="center"
             android:text="确定"
             android:textColor="@color/white"
@@ -45,7 +52,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/bg_cancel"
+            android:background="@drawable/shape_dialog_cancel"
             android:gravity="center"
             android:text="取消"
             android:textColor="@color/text_color_01"

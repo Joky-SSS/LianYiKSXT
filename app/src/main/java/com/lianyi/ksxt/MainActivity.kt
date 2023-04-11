@@ -11,7 +11,7 @@ import com.lianyi.ksxt.bean.State
 import com.lianyi.ksxt.bean.Token
 import com.lianyi.ksxt.bean.UserPadInfo
 import com.lianyi.ksxt.databinding.ActivityMainBinding
-import com.lianyi.ksxt.dialog.FinishTipDialog
+import com.lianyi.ksxt.dialog.TipDialog
 import com.lianyi.ksxt.utils.Constants
 import com.lianyi.ksxt.utils.PlayerUtil
 import com.lianyi.ksxt.utils.toFormatTime
@@ -55,9 +55,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        PlayerUtil.initPlayer(binding.videoPlayerTop)
-        PlayerUtil.initPlayer(binding.videoPlayerBottom)
+        PlayerUtil.initPlayer(binding.videoPlayer)
         binding.tvButton.setOnClickListener { buttonClick() }
+        binding.tvButtonNext.setOnClickListener { getScenesStatus() }
     }
 
     /**
@@ -72,7 +72,6 @@ class MainActivity : AppCompatActivity() {
                 .collectLatest { token ->
                     MMKV.defaultMMKV().encode(Constants.TOKEN, token)
                     startHeartBeat()
-//                    getScenesStatus()
                 }
         }
     }
@@ -96,10 +95,15 @@ class MainActivity : AppCompatActivity() {
             val padCode = AppHolder.getPadCode()
             RxHttp.get(ApiService.API_GET_VIDEO_URL)
                 .add("padId", "123456")
-                .toFlow<String>()
-                .collectLatest { url ->
-                    binding.videoPlayerTop.setUp(url, true, "")
-                    binding.videoPlayerTop.startPlayLogic()
+                .toAwait<String>()
+                .asFlow()
+                .catch {
+                    it.message?.let { message ->
+                        toast(message)
+                    }
+                }.collectLatest { url ->
+                    binding.videoPlayer.setUp(url, true, "")
+                    binding.videoPlayer.startPlayLogic()
                 }
         }
     }
@@ -111,13 +115,12 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val padCode = AppHolder.getPadCode()
             try {
-                val status = RxHttp.get(ApiService.API_GET_SCENES_STATUS)
+                RxHttp.get(ApiService.API_GET_SCENES_STATUS)
                     .add("padId", "123456")
-                    .toAwait<Int>()
-                    .asFlow().collectLatest {
+                    .toFlow<Int>()
+                    .collectLatest {
                         if (it == 1) {
                             getUserPadInfo()
-                            getVideoUrl()
                         } else {
                             toast("暂无考试，请等待考场管理员开启考试")
                         }
@@ -138,6 +141,16 @@ class MainActivity : AppCompatActivity() {
                 .toFlow<UserPadInfo>()
                 .collectLatest {
                     setUserInfo(it)
+                    if (it.examinationStatus == Constants.STARTED && it.confirm == Constants.CONFIRMED) {
+                        if (!it.realBeginTime.isNullOrBlank()) {
+                            //已经确认信息，开始考试
+                            updateButton(Constants.CONFIRMED, Constants.EXAM)
+                            getVideoUrl()
+                        } else {
+                            //已经确认信息，未开始考试
+                            repeatRequestUserInfo()
+                        }
+                    }
                 }
         }
     }
@@ -149,10 +162,12 @@ class MainActivity : AppCompatActivity() {
                 .add("padId", "123456")
                 .toAwait<UserPadInfo>()
                 .repeat(Long.MAX_VALUE, 5 * 1000) { userPadInfo ->
-                    userPadInfo.realBeginTime.isNullOrBlank()
+                    !userPadInfo.realBeginTime.isNullOrBlank()
                 }.asFlow()
                 .collectLatest {
-                    setUserInfo(it)
+                    userPadInfo = it
+                    updateButton(Constants.CONFIRMED, Constants.EXAM)
+                    getVideoUrl()
                 }
         }
     }
@@ -164,7 +179,7 @@ class MainActivity : AppCompatActivity() {
         userPadInfo?.let {
             this.userPadInfo = it
             binding.tvArea.text = it.roomName
-            binding.tvTableNum.text = it.seatSeg
+            binding.tvTableNum.text = it.seatSeq
             binding.tvSubject.text = it.subjectName
             binding.tvTopic.text = it.question
             binding.tvLicense.text = it.studentCode
@@ -180,6 +195,14 @@ class MainActivity : AppCompatActivity() {
     private fun updateButton(confirmState: Int, examinationStatus: Int) {
         when (examinationStatus) {
             Constants.UNSTART -> {
+                state = State.NOT_START
+                binding.tvButton.text = "开启考试"
+                binding.tvButton.setBackgroundResource(R.color.color_button_submit)
+                binding.layoutConfirmTip.visibility = View.INVISIBLE
+                binding.layoutTimeTip.visibility = View.INVISIBLE
+                binding.tvButtonNext.visibility = View.INVISIBLE
+            }
+            Constants.STARTED -> {
                 if (confirmState == Constants.UNCONFIRM) {
                     state = State.NOT_CONFIRM
                     //未确认
@@ -195,8 +218,9 @@ class MainActivity : AppCompatActivity() {
                     binding.layoutConfirmTip.visibility = View.INVISIBLE
                     binding.layoutTimeTip.visibility = View.INVISIBLE
                 }
+                binding.tvButtonNext.visibility = View.INVISIBLE
             }
-            Constants.STARTED -> {
+            Constants.EXAM -> {
                 state = State.EXAM
                 binding.tvButton.text = "结束考试"
                 binding.tvButton.setBackgroundResource(R.color.color_button_red)
@@ -205,6 +229,7 @@ class MainActivity : AppCompatActivity() {
                 binding.tvLabelTime.setTextColor(getColor(R.color.color_button_red))
                 binding.tvTime.setTextColor(getColor(R.color.color_button_red))
                 binding.tvLabelTime.text = "考试时间："
+                binding.tvButtonNext.visibility = View.INVISIBLE
                 starTimeCount()
             }
             Constants.FINISH -> {
@@ -216,6 +241,7 @@ class MainActivity : AppCompatActivity() {
                 binding.tvLabelTime.setTextColor(getColor(R.color.text_color_01))
                 binding.tvTime.setTextColor(getColor(R.color.text_color_01))
                 binding.tvLabelTime.text = "考试时长："
+                binding.tvButtonNext.visibility = View.VISIBLE
                 finishTimeCount()
             }
         }
@@ -224,18 +250,20 @@ class MainActivity : AppCompatActivity() {
     /**
      * 计算考试时间
      */
-    private val countDispatcher = Dispatchers.Default
+    private var countJob: Job? = null
     private fun starTimeCount() {
         val timeStr = userPadInfo.realBeginTime ?: return
-        val startTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).parse(timeStr).time
+        val startTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").apply {
+            timeZone = TimeZone.getTimeZone("Asia/Shanghai")
+        }.parse(timeStr).time
         val timeEmitter = channelFlow {
             while (isActive) {
                 send(System.currentTimeMillis() - startTime)
                 delay(1000)
             }
-        }.flowOn(countDispatcher)
+        }.flowOn(Dispatchers.Default)
 
-        lifecycleScope.launch {
+        countJob = lifecycleScope.launch {
             timeEmitter.collectLatest { second ->
                 binding.tvTime.text = second.toFormatTime()
             }
@@ -246,16 +274,18 @@ class MainActivity : AppCompatActivity() {
      * 停止计算考试时间
      */
     private fun finishTimeCount() {
-        countDispatcher.cancel()
+        countJob?.cancel()
+        countJob = null
     }
 
     /**
      * 确认信息弹窗
      */
     private fun showConfirmTip() {
-        XPopup.Builder(this).asConfirm("", "确认信息无误") {
-            confirmInfo()
-        }.show()
+        XPopup.Builder(this).dismissOnBackPressed(false).dismissOnTouchOutside(false)
+            .asCustom(TipDialog(this, "确认信息无误？") {
+                confirmInfo()
+            }).show()
     }
 
     /**
@@ -265,10 +295,12 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val padCode = AppHolder.getPadCode()
             RxHttp.postForm(ApiService.API_CONFIRM_INFO)
-                .add("padId", "123456")
+                .add("sceneId", userPadInfo.sceneId)
+                .add("studentId", userPadInfo.studentId)
                 .toFlow<String>()
                 .collectLatest {
-                    updateButton(Constants.CONFIRMED, Constants.UNSTART)
+                    updateButton(Constants.CONFIRMED, Constants.STARTED)
+                    repeatRequestUserInfo()
                 }
         }
 
@@ -278,9 +310,10 @@ class MainActivity : AppCompatActivity() {
      * 结束考试弹窗
      */
     private fun showFinishTip() {
-        XPopup.Builder(this).asCustom(FinishTipDialog(this) {
-            finishExam()
-        }).show()
+        XPopup.Builder(this).dismissOnBackPressed(false).dismissOnTouchOutside(false)
+            .asCustom(TipDialog(this, "确定结束考试？") {
+                finishExam()
+            }).show()
     }
 
     /**
@@ -325,14 +358,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        binding.videoPlayerTop.onVideoPause()
-        binding.videoPlayerBottom.onVideoPause()
+        binding.videoPlayer.onVideoPause()
     }
 
     override fun onResume() {
         super.onResume()
-        binding.videoPlayerTop.onVideoResume()
-        binding.videoPlayerBottom.onVideoResume()
+        binding.videoPlayer.onVideoResume()
     }
 
     override fun onDestroy() {
@@ -368,7 +399,7 @@ class MainActivity : AppCompatActivity() {
             .onStart { showLoading() }
             .onCompletion { hideLoading() }
             .catch {
-                if (toastError) toast(it.message)
+                if (toastError && it.message.isNullOrBlank()) toast(it.message)
             }
     }
 
@@ -378,7 +409,7 @@ class MainActivity : AppCompatActivity() {
             .onStart { showLoading() }
             .onCompletion { hideLoading() }
             .catch {
-                if (toastError) toast(it.message)
+                if (toastError && it.message.isNullOrBlank()) toast(it.message)
             }
     }
 }

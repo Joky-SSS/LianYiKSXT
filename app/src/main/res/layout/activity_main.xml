@@ -38,8 +38,7 @@
             android:layout_height="24dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="16dp"
-            />
+            android:layout_marginEnd="16dp" />
     </RelativeLayout>
 
     <LinearLayout
@@ -57,18 +56,12 @@
             android:padding="24dp">
 
             <com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
-                android:id="@+id/videoPlayerTop"
+                android:id="@+id/videoPlayer"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:src="@color/text_color_01" />
 
-            <com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
-                android:id="@+id/videoPlayerBottom"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:src="@color/text_color_01" />
         </LinearLayout>
 
         <LinearLayout
@@ -81,350 +74,362 @@
             android:paddingStart="24dp"
             android:paddingEnd="24dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="22dp"
-            android:layout_marginBottom="22dp"
-            android:text="考试信息"
-            android:textColor="@color/text_color_01"
-            android:textSize="22sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/bg_user_info"
-            android:orientation="vertical"
-            android:padding="1dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="22dp"
+                android:text="考试信息"
+                android:textColor="@color/text_color_01"
+                android:textSize="22sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:background="@color/bg_user_info"
+                android:orientation="vertical"
+                android:padding="1dp">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="2"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center"
-                    android:text="当前考场"
-                    android:textColor="@color/color_label"
-                    android:textSize="16sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/tvArea"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="5"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center_vertical"
-                    android:paddingStart="24dp"
-                    android:textColor="@color/text_color_01"
-                    android:textSize="16sp"
-                    tools:text="当前考场" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="2"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center"
+                        android:text="当前考场"
+                        android:textColor="@color/color_label"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvArea"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="5"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center_vertical"
+                        android:paddingStart="24dp"
+                        android:textColor="@color/text_color_01"
+                        android:textSize="16sp"
+                        tools:text="当前考场" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="2"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center"
+                        android:text="考桌编号"
+                        android:textColor="@color/color_label"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvTableNum"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="5"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center_vertical"
+                        android:paddingStart="24dp"
+                        android:textColor="@color/text_color_01"
+                        android:textSize="16sp"
+                        tools:text="当前考场" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="2"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center"
+                        android:text="考试科目"
+                        android:textColor="@color/color_label"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvSubject"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="5"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center_vertical"
+                        android:paddingStart="24dp"
+                        android:textColor="@color/text_color_01"
+                        android:textSize="16sp"
+                        tools:text="当前考场" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="2"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center"
+                        android:text="考试题目"
+                        android:textColor="@color/color_label"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvTopic"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="5"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center_vertical"
+                        android:paddingStart="24dp"
+                        android:textColor="@color/text_color_01"
+                        android:textSize="16sp"
+                        tools:text="当前考场" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="2"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center"
+                        android:text="准考证号"
+                        android:textColor="@color/color_label"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvLicense"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="5"
+                        android:background="@color/bg_info"
+                        android:gravity="center_vertical"
+                        android:paddingStart="24dp"
+                        android:textColor="@color/text_color_01"
+                        android:textSize="16sp"
+                        tools:text="当前考场" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="2"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center"
+                        android:text="考生姓名"
+                        android:textColor="@color/color_label"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvName"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_weight="5"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center_vertical"
+                        android:paddingStart="24dp"
+                        android:textColor="@color/text_color_01"
+                        android:textSize="16sp"
+                        tools:text="当前考场" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="1dp"
+                        android:layout_weight="2"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center"
+                        android:text="学校"
+                        android:textColor="@color/color_label"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvSchool"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="5"
+                        android:autoSizeMaxTextSize="16sp"
+                        android:autoSizeTextType="uniform"
+                        android:background="@color/bg_info"
+                        android:gravity="center_vertical"
+                        android:paddingStart="24dp"
+                        android:textColor="@color/text_color_01"
+                        android:textSize="16sp"
+                        tools:text="当前考场" />
+                </LinearLayout>
+
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="2"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center"
-                    android:text="考桌编号"
-                    android:textColor="@color/color_label"
-                    android:textSize="16sp" />
+                <LinearLayout
+                    android:id="@+id/layoutConfirmTip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="invisible"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvTableNum"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="5"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center_vertical"
-                    android:paddingStart="24dp"
-                    android:textColor="@color/text_color_01"
-                    android:textSize="16sp"
-                    tools:text="当前考场" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="请仔细核对上面的信息"
+                        android:textColor="@color/color_button_submit"
+                        android:textSize="16sp" />
 
-            <LinearLayout
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="↑"
+                        android:textColor="@color/color_arrow"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="确认无误后请点击下方按钮"
+                        android:textColor="@color/color_button_submit"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="↓"
+                        android:textColor="@color/color_arrow"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layoutTimeTip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:id="@+id/tvLabelTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="考试时间："
+                        android:textColor="@color/color_button_red"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="01:02:45"
+                        android:textColor="@color/color_button_red"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/tvButton"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_height="48dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/color_button_submit"
+                android:gravity="center"
+                android:text="开启考试"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="2"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center"
-                    android:text="考试科目"
-                    android:textColor="@color/color_label"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/tvSubject"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="5"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center_vertical"
-                    android:paddingStart="24dp"
-                    android:textColor="@color/text_color_01"
-                    android:textSize="16sp"
-                    tools:text="当前考场" />
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/tvButtonNext"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="2"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center"
-                    android:text="考试题目"
-                    android:textColor="@color/color_label"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/tvTopic"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="5"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center_vertical"
-                    android:paddingStart="24dp"
-                    android:textColor="@color/text_color_01"
-                    android:textSize="16sp"
-                    tools:text="当前考场" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="2"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center"
-                    android:text="准考证号"
-                    android:textColor="@color/color_label"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/tvLicense"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="5"
-                    android:background="@color/bg_info"
-                    android:gravity="center_vertical"
-                    android:paddingStart="24dp"
-                    android:textColor="@color/text_color_01"
-                    android:textSize="16sp"
-                    tools:text="当前考场" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="2"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center"
-                    android:text="考生姓名"
-                    android:textColor="@color/color_label"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/tvName"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="1dp"
-                    android:layout_weight="5"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center_vertical"
-                    android:paddingStart="24dp"
-                    android:textColor="@color/text_color_01"
-                    android:textSize="16sp"
-                    tools:text="当前考场" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="1dp"
-                    android:layout_weight="2"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center"
-                    android:text="学校"
-                    android:textColor="@color/color_label"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/tvSchool"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    android:autoSizeMaxTextSize="16sp"
-                    android:autoSizeTextType="uniform"
-                    android:background="@color/bg_info"
-                    android:gravity="center_vertical"
-                    android:paddingStart="24dp"
-                    android:textColor="@color/text_color_01"
-                    android:textSize="16sp"
-                    tools:text="当前考场" />
-            </LinearLayout>
-
+                android:layout_height="48dp"
+                android:layout_marginBottom="24dp"
+                android:background="@color/color_button_submit"
+                android:gravity="center"
+                android:visibility="invisible"
+                android:text="开启下一场考试"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
         </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
-            >
-
-            <LinearLayout
-                android:id="@+id/layoutConfirmTip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="请仔细核对上面的信息"
-                    android:textColor="@color/color_button_submit"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="↑"
-                    android:textColor="@color/color_arrow"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="确认无误后请点击下方按钮"
-                    android:textColor="@color/color_button_submit"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="↓"
-                    android:textColor="@color/color_arrow"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layoutTimeTip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:orientation="horizontal"
-                android:visibility="invisible">
-
-                <TextView
-                    android:id="@+id/tvLabelTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="考试时间："
-                    android:textColor="@color/color_button_red"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/tvTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="01:02:45"
-                    android:textColor="@color/color_button_red"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-        </RelativeLayout>
-
-
-        <TextView
-            android:id="@+id/tvButton"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="56dp"
-            android:background="@color/color_button_submit"
-            android:gravity="center"
-            android:text="开启考试"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
     </LinearLayout>
+
 </LinearLayout>
-
-    </LinearLayout>
