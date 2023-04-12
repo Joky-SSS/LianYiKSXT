@@ -2,12 +2,11 @@ package com.lianyi.ksxt
 
 import android.app.Application
 import android.os.Environment
-import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.CrashUtils
 import com.lianyi.ksxt.bean.Token
 import com.lianyi.ksxt.utils.Constants
 import com.tencent.mmkv.MMKV
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import rxhttp.RxHttpPlugins
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -66,6 +65,7 @@ class AppHolder : Application() {
         super.onCreate()
         app = this
         MMKV.initialize(this)
+        CrashUtils.init(getExternalFilesDir("crash")!!)
         RxHttpPlugins.init(getDefaultOkHttpClient()).setDebug(true).setOnParamAssembly {
             val token: Token? = MMKV.defaultMMKV().decodeParcelable(
                 Constants.TOKEN,

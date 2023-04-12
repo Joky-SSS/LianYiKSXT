@@ -27,6 +27,8 @@ object PlayerUtil {
         videoOptionModel = VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "buffer_size", 1316)
         list.add(videoOptionModel)
         videoOptionModel = VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "infbuf", 1) // 无限读
+        videoOptionModel = VideoOptionModel(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1)
+        list.add(videoOptionModel)
 
         list.add(videoOptionModel)
         videoOptionModel =
