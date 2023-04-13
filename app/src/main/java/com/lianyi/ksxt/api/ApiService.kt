@@ -7,7 +7,7 @@ object ApiService {
 //    @DefaultDomain //设置为默认域名
 //    const val API_BASE = "http://bmhq66.natappfree.cc/"
     @DefaultDomain //设置为默认域名
-    const val API_BASE = "http://192.168.2.179:8088/"
+    const val API_BASE = "http://192.168.2.222:8088/"
 
     //登录接口
     const val API_LOGIN = "exam/sys/iportal/users/clinet/login"
