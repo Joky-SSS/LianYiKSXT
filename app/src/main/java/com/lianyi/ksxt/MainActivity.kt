@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         PlayerUtil.initPlayer(binding.videoPlayer)
         binding.tvButton.setOnClickListener { buttonClick() }
         binding.tvButtonNext.setOnClickListener { getScenesStatus() }
+        binding.startVideo.setOnClickListener { getVideoUrl() }
     }
 
     /**
@@ -98,12 +99,14 @@ class MainActivity : AppCompatActivity() {
                 .toAwait<String>()
                 .asFlow()
                 .catch {
-                    it.message?.let { message ->
-                        toast(message)
-                    }
+                    toast("请先绑定设备和pad")
                 }.collectLatest { url ->
-                    binding.videoPlayer.setUp(url, true, "")
-                    binding.videoPlayer.startPlayLogic()
+                    if (url.isNullOrBlank()) {
+                        toast("请先绑定设备和pad")
+                    } else {
+                        binding.videoPlayer.setUp(url, true, "")
+                        binding.videoPlayer.startPlayLogic()
+                    }
                 }
         }
     }
@@ -145,7 +148,6 @@ class MainActivity : AppCompatActivity() {
                         if (!it.realBeginTime.isNullOrBlank()) {
                             //已经确认信息，开始考试
                             updateButton(Constants.CONFIRMED, Constants.EXAM)
-                            getVideoUrl()
                         } else {
                             //已经确认信息，未开始考试
                             repeatRequestUserInfo()
@@ -167,7 +169,6 @@ class MainActivity : AppCompatActivity() {
                 .collectLatest {
                     userPadInfo = it
                     updateButton(Constants.CONFIRMED, Constants.EXAM)
-                    getVideoUrl()
                 }
         }
     }

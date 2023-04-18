@@ -47,7 +47,7 @@
         android:layout_margin="16dp"
         android:orientation="horizontal">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -58,11 +58,22 @@
             <com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
                 android:id="@+id/videoPlayer"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
                 android:src="@color/text_color_01" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/startVideo"
+                android:layout_width="96dp"
+                android:layout_height="36dp"
+                android:layout_marginBottom="24dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="#AAFFFFFF"
+                android:gravity="center"
+                android:text="开启预览"
+                android:textColor="@color/color_button_submit"
+                android:textSize="14sp" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="0dp"
