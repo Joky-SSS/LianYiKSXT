@@ -2,11 +2,14 @@ package com.lianyi.ksxt
 
 import android.app.Application
 import android.os.Environment
+import android.util.Log
 import com.blankj.utilcode.util.CrashUtils
+import com.blankj.utilcode.util.LogUtils
 import com.lianyi.ksxt.bean.Token
 import com.lianyi.ksxt.utils.Constants
 import com.tencent.mmkv.MMKV
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import rxhttp.RxHttpPlugins
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -66,6 +69,10 @@ class AppHolder : Application() {
         app = this
         MMKV.initialize(this)
         CrashUtils.init(getExternalFilesDir("crash")!!)
+        LogUtils.getConfig().apply {
+            isLog2FileSwitch = true
+            dir = getExternalFilesDir("logs")!!.absolutePath
+        }
         RxHttpPlugins.init(getDefaultOkHttpClient()).setDebug(true).setOnParamAssembly {
             val token: Token? = MMKV.defaultMMKV().decodeParcelable(
                 Constants.TOKEN,
@@ -81,10 +88,14 @@ class AppHolder : Application() {
     }
 
     private fun getDefaultOkHttpClient(): OkHttpClient {
+        val logInterceptor = HttpLoggingInterceptor {
+            LogUtils.log(Log.DEBUG, "http", it)
+        }.setLevel(HttpLoggingInterceptor.Level.BODY)
         return OkHttpClient.Builder()
             .connectTimeout(60 * 3, TimeUnit.SECONDS)
             .readTimeout(60 * 3, TimeUnit.SECONDS)
             .writeTimeout(60 * 3, TimeUnit.SECONDS)
+            .addInterceptor(logInterceptor)
             .hostnameVerifier { _, _ -> true } //忽略host验证
             .build()
     }
